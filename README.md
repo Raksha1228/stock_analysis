@@ -1,105 +1,84 @@
-# AI Crew for Stock Analysis
-## Introduction
-This project is an example using the CrewAI framework to automate the process of analyzing a stock. CrewAI orchestrates autonomous AI agents, enabling them to collaborate and execute complex tasks efficiently.
+# 🧠 Autonomous Stock Analysis using AI Agents
 
-By [@joaomdmoura](https://x.com/joaomdmoura)
+## 📘 Overview  
+This project demonstrates how to build an AI-powered, multi-agent system that automates the analysis of company stocks. Using a coordinated agent framework, different AI roles work together to conduct web research, analyze financial reports, and generate insightful recommendations.
 
-- [CrewAI Framework](#crewai-framework)
-- [Running the script](#running-the-script)
-- [Details & Explanation](#details--explanation)
-- [Using GPT 3.5](#using-gpt-35)
-- [Using Local Models with Ollama](#using-local-models-with-ollama)
-- [Contributing](#contributing)
-- [Support and Contact](#support-and-contact)
-- [License](#license)
+---
 
-## CrewAI Framework
-CrewAI is designed to facilitate the collaboration of role-playing AI agents. In this example, these agents work together to give a complete stock analysis and investment recommendation
+## 📂 Table of Contents  
+- Framework Overview  
+- How to Run  
+- Project Structure & File Descriptions  
+- Model Configuration Options  
+- Using Local AI Models
 
-## Running the Script
-It uses GPT-4 by default so you should have access to that to run it.
+---
 
-***Disclaimer:** This will use gpt-4 unless you changed it 
-not to, and by doing so it will cost you money.*
+## 🧠 Framework Overview  
+The system operates through a team of specialized AI agents. Each agent is given a role (e.g., researcher, analyst, summarizer) and a goal. They collaborate to collect data, evaluate financial health, and form a final analysis. This approach is inspired by real-world task delegation among human experts.
 
-- **Configure Environment**: Copy ``.env.example` and set up the environment variables for [Browseless](https://www.browserless.io/), [Serper](https://serper.dev/), [SEC-API](https://sec-api.io) and [OpenAI](https://platform.openai.com/api-keys)
-- **Install Dependencies**: Run `poetry install --no-root`.
-- **Execute the Script**: Run `python main.py` and input your idea.
+---
 
-## Details & Explanation
-- **Running the Script**: Execute `python main.py`` and input the company to be analyzed when prompted. The script will leverage the CrewAI framework to analyze the company and generate a detailed report.
-- **Key Components**:
-  - `./main.py`: Main script file.
-  - `./stock_analysis_tasks.py`: Main file with the tasks prompts.
-  - `./stock_analysis_agents.py`: Main file with the agents creation.
-  - `./tools`: Contains tool classes used by the agents.
+## 🚀 How to Run
 
-## Using GPT 3.5
-CrewAI allow you to pass an llm argument to the agent construtor, that will be it's brain, so changing the agent to use GPT-3.5 instead of GPT-4 is as simple as passing that argument on the agent you want to use that LLM (in `main.py`).
-```python
-from langchain.chat_models import ChatOpenAI
+> ⚠️ By default, this project uses a cloud-based language model that may require paid access.
 
-llm = ChatOpenAI(model='gpt-3.5') # Loading GPT-3.5
+1. **Setup Environment Variables**  
+   - Duplicate the `.env.example` file and rename it to `.env`.  
+   - Fill in the necessary API keys for services like web search or financial document retrieval.
 
-def local_expert(self):
-	return Agent(
-      role='The Best Financial Analyst',
-      goal="""Impress all customers with your financial data 
-      and market trends analysis""",
-      backstory="""The most seasoned financial analyst with 
-      lots of expertise in stock market analysis and investment
-      strategies that is working for a super important customer.""",
-      verbose=True,
-      llm=llm, # <----- passing our llm reference here
-      tools=[
-        BrowserTools.scrape_and_summarize_website,
-        SearchTools.search_internet,
-        CalculatorTools.calculate,
-        SECTools.search_10q,
-        SECTools.search_10k
-      ]
-    )
-```
+2. **Install Dependencies**  
+   - Use the provided dependency manager (e.g., Poetry) to install required packages.
 
-## Using Local Models with Ollama
-The CrewAI framework supports integration with local models, such as Ollama, for enhanced flexibility and customization. This allows you to utilize your own models, which can be particularly useful for specialized tasks or data privacy concerns.
+3. **Run the Program**  
+   - Launch the main script and enter the name of the company to analyze when prompted.  
+   - The agents will execute their tasks and return a structured report.
 
-### Setting Up Ollama
-- **Install Ollama**: Ensure that Ollama is properly installed in your environment. Follow the installation guide provided by Ollama for detailed instructions.
-- **Configure Ollama**: Set up Ollama to work with your local model. You will probably need to [tweak the model using a Modelfile](https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md), I'd recommend adding `Observation` as a stop word and playing with `top_p` and `temperature`.
+---
 
-### Integrating Ollama with CrewAI
-- Instantiate Ollama Model: Create an instance of the Ollama model. You can specify the model and the base URL during instantiation. For example:
+## 📁 Project Structure & File Descriptions
 
-```python
-from langchain.llms import Ollama
-ollama_openhermes = Ollama(model="openhermes")
-# Pass Ollama Model to Agents: When creating your agents within the CrewAI framework, you can pass the Ollama model as an argument to the Agent constructor. For instance:
+### `main.py`  
+This is the main entry point of the project. It initializes the agents, sets up the task pipeline, and handles user input (the company name). Once run, it activates the full analysis process.
 
-def local_expert(self):
-	return Agent(
-      role='The Best Financial Analyst',
-      goal="""Impress all customers with your financial data 
-      and market trends analysis""",
-      backstory="""The most seasoned financial analyst with 
-      lots of expertise in stock market analysis and investment
-      strategies that is working for a super important customer.""",
-      verbose=True,
-      llm=ollama_openhermes, # Ollama model passed here
-      tools=[
-        BrowserTools.scrape_and_summarize_website,
-        SearchTools.search_internet,
-        CalculatorTools.calculate,
-        SECTools.search_10q,
-        SECTools.search_10k
-      ]
-    )
-```
+### `stock_analysis_agents.py`  
+Defines the different AI agents used in the project. Each agent is configured with a role (e.g., market researcher, financial analyst), a backstory for context, and access to specific tools like calculators or search engines.
 
-### Advantages of Using Local Models
-- **Privacy**: Local models allow processing of data within your own infrastructure, ensuring data privacy.
-- **Customization**: You can customize the model to better suit the specific needs of your tasks.
-- **Performance**: Depending on your setup, local models can offer performance benefits, especially in terms of latency.
+### `stock_analysis_tasks.py`  
+Contains the workflow and task definitions that each agent is assigned. This script outlines how agents should collaborate step-by-step to complete the stock analysis process.
 
-## License
-This project is released under the MIT License.
+### `tools/` *(folder)*  
+Includes various helper modules (tools) that the agents use to accomplish their tasks. These tools include:
+- **Web Scraping**: For gathering real-time data from websites.  
+- **Search Integration**: For querying the internet.  
+- **Financial Document Search**: For fetching documents like 10-K or 10-Q filings.  
+- **Calculators**: For computing financial ratios or basic math operations.
+
+### `.env.example`  
+A sample environment file showing all the keys and variables needed to run the project. Users should copy this file and rename it to `.env` before editing.
+
+---
+
+## ⚙️ Model Configuration Options
+
+This project supports flexible model usage. By default, it uses GPT-4, but you can change it to any other model like GPT-3.5 or a locally hosted one.
+
+To switch the model:
+- Update the agent definition to reference the desired model during initialization.
+- You can configure each agent individually, allowing a mix of model types in one workflow.
+
+---
+
+## 🖥️ Using Local AI Models (Ollama)
+
+The system also supports local language models for users who want more control or need to run everything offline.
+
+Steps:
+- Install and configure the Ollama runtime environment.
+- Set the desired local model as the agent's brain in the setup.
+- Optionally tweak model behavior using configuration files (like setting stop words or adjusting temperature).
+
+Using local models gives better privacy and allows customization for specific use cases.
+
+---
+
